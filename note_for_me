@@ -8,3 +8,6 @@ important : password hashes may contain more than 100 characters. make sure to u
 to use cookies and sessions we need to install three packeges on our backend
 npm install body-parser express-session cookie-parser
 
+for JWT Authentication
+required packeges on backend:
+    

@@ -7,6 +7,10 @@ const mysql = require("mysql");
 const bcrypt = require("bcrypt"); // used for pasword hashing
 const saltRounds = 10; // used for pasword hashing
 
+//for JWT
+const jwt = require("jsonwebtoken");
+
+
 // dependencies required for sessions and cookies
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
@@ -52,6 +56,29 @@ app.get("/test", (req, res) => {
     res.send("data inserted");
   });
 });
+
+// to verify that the token is valid also *we pass the token from the headers
+const verifyJWT = (req, res, next) => {
+  const token = req.headers["x-access-token"]
+  if (!token) {
+    res.send("need a token !");
+  }
+  else {
+    jwt.verify(token, "jwtsecret", (err, decoded) => {
+      if (err) {
+        res.json({ auth: false, message: "faild to authenticate !"});
+      } 
+      else {
+        req.userId = decoded.id;
+        next();
+      }
+    })
+  } 
+
+// create a "end point" to perform requests using JWT token
+app.get {"api/isAuthenticated", verifyJWT,(req, res) => {
+  res.send(" Authenticated !")
+}}
 
 
 
@@ -162,9 +189,19 @@ app.post("/api/signup", (req, res) => {
           // compare the password with selected results
           bcrypt.compare(password, result[0].password, (error, response) => {
             if (response) {
+              
+              //in here user successfully logged in
+              const id = result[0].email; // used email to make the id
+              // create a token using selected id
+              const token = jwt.sign({id},"jwtsecret", {
+                expiresIn: 300,
+              }); // the jwt secret should be in a secure place than this (like dotenv file) for testing purposes I menctioned in here
               req.session.user = result;
-              console.log(req.session.user);
-              res.send(result);
+              
+              
+              // instead of sending all the information from the user, we can use the token that we create instead
+              //res.send(result);
+              res.json({auth: true, token: token, result: result});
             }
             else {
               res.send({message: 'Wrong Password for the selected user'});
