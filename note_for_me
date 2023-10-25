@@ -1,0 +1,10 @@
+npm init -y (initialize node )
+npm install express ( install express dependency )
+node index.js ( to run the backend )
+
+bcrypt ( dependency for password hashing )
+important : password hashes may contain more than 100 characters. make sure to use char(500) or something similar
+
+to use cookies and sessions we need to install three packeges on our backend
+npm install body-parser express-session cookie-parser
+
