@@ -59,7 +59,9 @@ app.get("/test", (req, res) => {
 
 // to verify that the token is valid also *we pass the token from the headers
 const verifyJWT = (req, res, next) => {
-  const token = req.headers["x-access-token"]
+  const token = req.headers["x-access-token"]   // x access token eka NA HEADERS WALA
+  console.log(req.headers) // hey
+
   if (!token) {
     res.send("need a token !");
   }
@@ -73,12 +75,12 @@ const verifyJWT = (req, res, next) => {
         next();
       }
     })
-  } 
+  }};
 
 // create a "end point" to perform requests using JWT token
-app.get {"api/isAuthenticated", verifyJWT,(req, res) => {
-  res.send(" Authenticated !")
-}}
+app.post ("/api/isAuthenticated", verifyJWT,(req, res) => {
+  res.send("Authenticated !")
+})
 
 
 
@@ -204,12 +206,12 @@ app.post("/api/signup", (req, res) => {
               res.json({auth: true, token: token, result: result});
             }
             else {
-              res.send({message: 'Wrong Password for the selected user'});
+              res.send({auth: false, message: 'Wrong password for the selected User'});
             }
           })
         }
         else {
-          res.send({message:"Wrong Combination"})
+          res.json({auth: false, message: 'No user Exists'});
         }
       }
     }
